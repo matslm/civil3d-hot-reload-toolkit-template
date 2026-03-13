@@ -1,0 +1,11 @@
+---
+title: "Sections"
+source_url: "https://help.autodesk.com/cloudhelp/2026/ENU/Civil3D-DevGuide/files/GUID-95139A97-8B1D-4A70-AB96-D8B0349B5268.htm"
+hierarchy: ["Developer's Guide", "API Developer's Guide", "Sections Overview", "Sections"]
+---
+
+# Sections
+
+Sections represent terrain elevations that cut across surfaces, including corridor surfaces, pipe networks, and grading, which are associated with a specified sample line group. Sections are "sampled" from a source (a surface or corridor shape). In the .NET API the sources for sections are exposed by the `SectionSource` object. A `SampleLineGroup` contains a collection of `SectionSources`, which can be accessed by the `SampleLineGroup.GetSectionSources()` method.
+
+**Parent topic:** [Sections Overview](https://help.autodesk.com/cloudhelp/2026/ENU/Civil3D-DevGuide/files/GUID-18800A23-76CA-40DC-9B53-8E9CF2E12DD5.htm)

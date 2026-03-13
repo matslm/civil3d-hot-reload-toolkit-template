@@ -1,0 +1,33 @@
+<Window x:Class="Civil3dToolkit.Plugin.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Civil 3D Toolkit" Height="250" Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" 
+                   Text="{Binding GreetingMessage}" 
+                   FontSize="16" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,0,0,20"/>
+        
+        <Button Grid.Row="2" 
+                Content="Run Sample Action!" 
+                Background="#FF007ACC" Foreground="White"
+                Command="{Binding ExecuteSampleActionCommand}" 
+                Height="35" 
+                Width="200"
+                Cursor="Hand"/>
+    </Grid>
+</Window>

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x64</Platforms>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>1.0.0</Version>
+    <Company>Your Company</Company>
+    <Product>Civil3dToolkit Loader</Product>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AcadDir>C:\Program Files\Autodesk\AutoCAD 2026</AcadDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Civil3dToolkit.Shared\Civil3dToolkit.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AcDbMgd">
+      <HintPath>$(AcadDir)\AcDbMgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AcMgd">
+      <HintPath>$(AcadDir)\AcMgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="accoremgd">
+      <HintPath>$(AcadDir)\accoremgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
