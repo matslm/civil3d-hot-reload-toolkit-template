@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Civil3dToolkit.Shared\Civil3dToolkit.Shared.csproj" />
     <ProjectReference Include="..\Civil3dToolkit.Core\Civil3dToolkit.Core.csproj" />
   </ItemGroup>
 
