@@ -2,11 +2,11 @@ namespace Civil3dToolkit.Plugin.Commands;
 
 using Civil3dToolkit.Core.Commands;
 using Civil3dToolkit.Plugin.Views;
+using Civil3dToolkit.Shared;
 
+[ToolkitCommand(ToolkitCommands.MainUi)]
 internal class MainUiCommand(IServiceProvider serviceProvider) : IToolkitCommand
 {
-    public string CommandName => "TK_MAIN_UI";
-
     public void Execute()
     {
         MainWindow mainWindow = serviceProvider.GetRequiredService<MainWindow>();

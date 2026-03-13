@@ -12,44 +12,30 @@ internal class CivilServiceImpl(ITransactionService transactionService) : ICivil
     public IEnumerable<string> GetDocumentLayers()
     {
         List<string> layers = [];
-        Document? doc = Application.DocumentManager.MdiActiveDocument;
-        if (doc == null) return layers;
-
-        using (doc.LockDocument())
+        transactionService.RunReadOnly((tr, db) =>
         {
-            using (Transaction tr = doc.Database.TransactionManager.StartTransaction())
+            LayerTable lt = (LayerTable)tr.GetObject(db.LayerTableId, OpenMode.ForRead);
+            foreach (ObjectId ltrId in lt)
             {
-                LayerTable lt = (LayerTable)tr.GetObject(doc.Database.LayerTableId, OpenMode.ForRead);
-                foreach (ObjectId ltrId in lt)
-                {
-                    LayerTableRecord ltr = (LayerTableRecord)tr.GetObject(ltrId, OpenMode.ForRead);
-                    layers.Add(ltr.Name);
-                }
-                tr.Commit();
+                LayerTableRecord ltr = (LayerTableRecord)tr.GetObject(ltrId, OpenMode.ForRead);
+                layers.Add(ltr.Name);
             }
-        }
+        });
         return layers.OrderBy(l => l);
     }
 
     public IEnumerable<string> GetDocumentTextStyles()
     {
         List<string> styles = [];
-        Document? doc = Application.DocumentManager.MdiActiveDocument;
-        if (doc == null) return styles;
-
-        using (doc.LockDocument())
+        transactionService.RunReadOnly((tr, db) =>
         {
-            using (Transaction tr = doc.Database.TransactionManager.StartTransaction())
+            TextStyleTable tst = (TextStyleTable)tr.GetObject(db.TextStyleTableId, OpenMode.ForRead);
+            foreach (ObjectId tsrId in tst)
             {
-                TextStyleTable tst = (TextStyleTable)tr.GetObject(doc.Database.TextStyleTableId, OpenMode.ForRead);
-                foreach (ObjectId tsrId in tst)
-                {
-                    TextStyleTableRecord tsr = (TextStyleTableRecord)tr.GetObject(tsrId, OpenMode.ForRead);
-                    styles.Add(tsr.Name);
-                }
-                tr.Commit();
+                TextStyleTableRecord tsr = (TextStyleTableRecord)tr.GetObject(tsrId, OpenMode.ForRead);
+                styles.Add(tsr.Name);
             }
-        }
+        });
         return styles.OrderBy(s => s);
     }
 
@@ -77,13 +63,11 @@ internal class CivilServiceImpl(ITransactionService transactionService) : ICivil
         double textSize, 
         bool useMask)
     {
-        Document? doc = Application.DocumentManager.MdiActiveDocument;
-        if (doc == null) return false;
-
         return transactionService.RunInModelSpace((tr, btr) =>
         {
-            ObjectId styleId = doc.Database.Textstyle; 
-            TextStyleTable tst = (TextStyleTable)tr.GetObject(doc.Database.TextStyleTableId, OpenMode.ForRead);
+            Database db = btr.Database;
+            ObjectId styleId = db.Textstyle; 
+            TextStyleTable tst = (TextStyleTable)tr.GetObject(db.TextStyleTableId, OpenMode.ForRead);
             if (tst.Has(textStyleName))
             {
                 styleId = tst[textStyleName];
@@ -118,7 +102,7 @@ internal class CivilServiceImpl(ITransactionService transactionService) : ICivil
 
             if (textIds.Count > 1)
             {
-                DBDictionary groupDict = (DBDictionary)tr.GetObject(doc.Database.GroupDictionaryId, OpenMode.ForWrite);
+                DBDictionary groupDict = (DBDictionary)tr.GetObject(db.GroupDictionaryId, OpenMode.ForWrite);
                 string groupName = $"TK_CUSTOMBAND_{Guid.NewGuid().ToString()[..8]}";
 
                 using Group textGroup = new("TK_CUSTOMBAND Group", true);

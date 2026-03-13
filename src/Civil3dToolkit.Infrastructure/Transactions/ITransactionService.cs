@@ -9,7 +9,17 @@ public interface ITransactionService
     /// Executes an action within a locked document and an open transaction.
     /// Automatically opens the Model Space block table record for writing and commits the transaction upon success.
     /// </summary>
-    /// <param name="action">The logic to execute, providing the Transaction and the ModelSpace BlockTableRecord.</param>
-    /// <returns>True if the transaction committed successfully; otherwise, false.</returns>
     bool RunInModelSpace(Action<Transaction, BlockTableRecord> action);
+
+    /// <summary>
+    /// Executes a general action within a write transaction.
+    /// Handles document locking and transaction committing automatically.
+    /// </summary>
+    bool RunInTransaction(Action<Transaction, Database> action);
+
+    /// <summary>
+    /// Executes an action within a read-only transaction.
+    /// No document locking is performed.
+    /// </summary>
+    bool RunReadOnly(Action<Transaction, Database> action);
 }

@@ -29,7 +29,7 @@ public class MainLoader : IExtensionApplication
     /// <summary>
     /// Hot-reload command. Fetches the latest compiled DLL into the memory context.
     /// </summary>
-    [CommandMethod("TK_RELOAD")]
+    [CommandMethod(ToolkitCommands.Reload)]
     public void ReloadPlugin()
     {
         var editor = Application.DocumentManager.MdiActiveDocument.Editor;
@@ -69,7 +69,7 @@ public class MainLoader : IExtensionApplication
             {
                 _bootstrapper = (IPluginBootstrapper?)Activator.CreateInstance(bootstrapperType);
                 _bootstrapper?.Initialize();
-                editor.WriteMessage("\n>>> [SUCCESS] Core plugin reloaded into memory and initialized!\n");
+                editor.WriteMessage($"\n>>> [SUCCESS] Core plugin reloaded into memory and initialized! (Command {ToolkitCommands.Reload} successful)\n");
             }
             else
             {
@@ -91,7 +91,7 @@ public class MainLoader : IExtensionApplication
         
         if (_bootstrapper == null)
         {
-            editor.WriteMessage("\n[ERROR] Plugin not loaded or bootstrapper not found. Run TK_RELOAD first.\n");
+            editor.WriteMessage($"\n[ERROR] Plugin not loaded or bootstrapper not found. Run {ToolkitCommands.Reload} first.\n");
             return;
         }
 
@@ -130,12 +130,12 @@ public class MainLoader : IExtensionApplication
     // NATIVE CIVIL 3D COMMANDS (The Proxy Endpoints)
     // =====================================================================
 
-    [CommandMethod("TK_MAIN_UI")]
-    public void ShowMainUi() => RouteCommandToPlugin("TK_MAIN_UI");
+    [CommandMethod(ToolkitCommands.MainUi)]
+    public void ShowMainUi() => RouteCommandToPlugin(ToolkitCommands.MainUi);
 
-    [CommandMethod("TK_CUSTOMBAND")]
-    public void DrawCustomBand() => RouteCommandToPlugin("TK_CUSTOMBAND");
+    [CommandMethod(ToolkitCommands.CustomBand)]
+    public void DrawCustomBand() => RouteCommandToPlugin(ToolkitCommands.CustomBand);
     
-    [CommandMethod("TK_SQUARE")]
-    public void DrawSquareCommand() => RouteCommandToPlugin("TK_SQUARE");
+    [CommandMethod(ToolkitCommands.DrawSquare)]
+    public void DrawSquareCommand() => RouteCommandToPlugin(ToolkitCommands.DrawSquare);
 }

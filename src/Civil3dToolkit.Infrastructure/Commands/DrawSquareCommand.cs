@@ -2,15 +2,15 @@ namespace Civil3dToolkit.Infrastructure.Commands;
 
 using Civil3dToolkit.Core.Commands;
 using Civil3dToolkit.Core.Interfaces;
+using Civil3dToolkit.Shared;
 
 /// <summary>
 /// Implementation sample: A simple command that interacts with the editor 
 /// and calls a service to modify the database.
 /// </summary>
+[ToolkitCommand(ToolkitCommands.DrawSquare)]
 internal class DrawSquareCommand(IUserInteractionService ui, ICivilService civilService) : IToolkitCommand
 {
-    public string CommandName => "TK_SQUARE";
-
     public void Execute()
     {
         // 1. Get user input via the abstract UI service (Headless-friendly!)

@@ -7,6 +7,7 @@ using Civil3dToolkit.Infrastructure.Commands;
 using Civil3dToolkit.Infrastructure.Services;
 using Civil3dToolkit.Infrastructure.Transactions;
 using Civil3dToolkit.Plugin.Commands;
+using Civil3dToolkit.Plugin.Services;
 using Civil3dToolkit.Plugin.Views;
 
 /// <summary>
@@ -15,12 +16,10 @@ using Civil3dToolkit.Plugin.Views;
 /// </summary>
 public static class DiContainer
 {
-    public static IServiceProvider? Services { get; private set; }
-
     /// <summary>
-    /// Configures all the dependencies required by the application.
+    /// Configures all the dependencies required by the application and returns a new ServiceProvider.
     /// </summary>
-    public static void Initialize()
+    public static IServiceProvider Build()
     {
         ServiceCollection services = new();
 
@@ -30,6 +29,11 @@ public static class DiContainer
         services.AddSingleton<ICivilService, CivilServiceImpl>();
         services.AddSingleton<IUserInteractionService, AutoCadInteractionService>();
         services.AddSingleton<ITransactionService, TransactionService>();
+
+        // ==========================================
+        // 2. Register UI Services (moved from Infrastructure)
+        // ==========================================
+        services.AddSingleton<IUserMessageService, UserMessageService>();
 
         // ==========================================
         // 2. Register Plugin Commands (CQRS-style)
@@ -53,7 +57,7 @@ public static class DiContainer
         services.AddTransient<MainWindow>();
         services.AddTransient<CustomBandWindow>();
 
-        // Build the service provider
-        Services = services.BuildServiceProvider();
+        // Build and return the service provider
+        return services.BuildServiceProvider();
     }
 }

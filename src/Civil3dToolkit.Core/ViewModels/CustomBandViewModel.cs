@@ -4,9 +4,9 @@ using Civil3dToolkit.Core.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-public partial class CustomBandViewModel(ICivilService civilService) : ObservableObject
+public partial class CustomBandViewModel(ICivilService civilService, IUserMessageService messageService) : ObservableObject
 {
-    public List<(double X, double Y)> Midpoints { get; set; } = [];
+    private List<(double X, double Y)> _midpoints = [];
 
     [ObservableProperty]
     private string _valuesText = "";
@@ -34,8 +34,9 @@ public partial class CustomBandViewModel(ICivilService civilService) : Observabl
 
     public Action? CloseAction { get; set; }
 
-    public void Initialize()
+    public void Initialize(IEnumerable<(double X, double Y)> midpoints)
     {
+        _midpoints = new List<(double X, double Y)>(midpoints);
         LoadDocumentData();
     }
 
@@ -55,16 +56,16 @@ public partial class CustomBandViewModel(ICivilService civilService) : Observabl
                 AvailableTextStyles.Add(style);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Headless test or error loading
+            messageService.ShowError("Data Load Error", "Failed to load layers or text styles from AutoCAD.", ex);
         }
     }
 
     [RelayCommand]
     private void Execute()
     {
-        if (Midpoints.Count == 0)
+        if (_midpoints.Count == 0)
         {
             CloseAction?.Invoke();
             return;
@@ -76,13 +77,18 @@ public partial class CustomBandViewModel(ICivilService civilService) : Observabl
 
         var textList = new List<string>(texts);
 
-        civilService.DrawCustomBandTexts(
-            Midpoints, 
+        bool success = civilService.DrawCustomBandTexts(
+            _midpoints, 
             textList, 
             SelectedLayer, 
             SelectedTextStyle,
             TextSize, 
             UseBackgroundMask);
+
+        if (!success)
+        {
+            messageService.ShowError("Execution Error", "Failed to create texts in AutoCAD.");
+        }
 
         CloseAction?.Invoke();
     }

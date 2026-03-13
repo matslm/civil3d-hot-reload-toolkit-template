@@ -4,11 +4,11 @@ using Civil3dToolkit.Core.Commands;
 using Civil3dToolkit.Core.Interfaces;
 using Civil3dToolkit.Core.ViewModels;
 using Civil3dToolkit.Plugin.Views;
+using Civil3dToolkit.Shared;
 
+[ToolkitCommand(ToolkitCommands.CustomBand)]
 internal class CustomBandCommand(IServiceProvider serviceProvider, IUserInteractionService ui) : IToolkitCommand
 {
-    public string CommandName => "TK_CUSTOMBAND";
-
     public void Execute()
     {
         List<(double X, double Y)> midpoints = [];
@@ -48,11 +48,10 @@ internal class CustomBandCommand(IServiceProvider serviceProvider, IUserInteract
             return;
         }
 
-        // Open the WPF Window and pass the midpoints
+        // Open the WPF Window and pass the midpoints via the specialized Initialize method
         CustomBandWindow window = serviceProvider.GetRequiredService<CustomBandWindow>();
         CustomBandViewModel viewModel = (CustomBandViewModel)window.DataContext;
-        viewModel.Midpoints = midpoints;
-        viewModel.Initialize();
+        viewModel.Initialize(midpoints);
 
         Application.ShowModalWindow(window);
     }

@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 /// Implementation sample: The ViewModel for the main dashboard.
 /// Demonstrates pure C# logic that interacts with AutoCAD via an interface.
 /// </summary>
-public partial class MainViewModel(ICivilService civilService) : ObservableObject
+public partial class MainViewModel(ICivilService civilService, IUserMessageService messageService) : ObservableObject
 {
     [ObservableProperty]
     private string _greetingMessage = "Ready to automate Civil 3D!";
@@ -22,11 +22,12 @@ public partial class MainViewModel(ICivilService civilService) : ObservableObjec
         if (success)
         {
             GreetingMessage = $"Sample square successfully drawn at {DateTime.Now.ToShortTimeString()}";
-            System.Windows.MessageBox.Show("Square drawn in Model Space!", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            messageService.ShowInfo("Success", "Square drawn in Model Space!");
         }
         else
         {
             GreetingMessage = "Failed to draw the square. Check AutoCAD console.";
+            messageService.ShowError("Drawing Error", "Could not draw the square in AutoCAD.");
         }
     }
 }
