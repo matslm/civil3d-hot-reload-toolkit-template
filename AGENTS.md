@@ -19,16 +19,16 @@ The solution follows a decoupled architecture split into five primary projects:
     *   **Responsibilities**: Registers AutoCAD commands, manages the `AssemblyLoadContext`, and routes execution to the plugin via the stable `IPluginBootstrapper` interface.
 2.  **Civil3dToolkit.Shared**:
     *   **Purpose**: Contract library for cross-context communication.
-    *   **Responsibilities**: Contains the `IPluginBootstrapper` interface used by both the Loader and the Plugin.
+    *   **Responsibilities**: Contains the `IPluginBootstrapper` interface and `ToolkitCommands` constants used by both the Loader and the Plugin.
 3.  **Civil3dToolkit.Core**:
     *   **Purpose**: The Domain layer.
-    *   **Responsibilities**: Pure C# business logic, interfaces (`ICivilService`, `IUserInteractionService`, `IToolkitCommand`), and ViewModels. **Strictly NO Autodesk references here.**
+    *   **Responsibilities**: Pure C# business logic, interfaces (`ICivilService`, `IUserInteractionService`, `IUserMessageService`, `IToolkitCommand`), command metadata (`ToolkitCommandAttribute`), and ViewModels. **Strictly NO Autodesk or WPF references here.**
 4.  **Civil3dToolkit.Infrastructure**:
     *   **Purpose**: The Infrastructure layer.
     *   **Responsibilities**: Implements Core interfaces using Autodesk SDKs. Contains `TransactionService` to wrap AutoCAD database operations and CAD-dependent `IToolkitCommand` implementations.
 5.  **Civil3dToolkit.Plugin**:
     *   **Purpose**: The Presentation layer (Composition Root).
-    *   **Responsibilities**: WPF Views, DI container configuration (`DiContainer.cs`), and UI-dependent `IToolkitCommand` implementations.
+    *   **Responsibilities**: WPF Views, UI services (e.g., `IUserMessageService`), DI container configuration (`DiContainer.cs`), and UI-dependent `IToolkitCommand` implementations.
 
 ## Modern C# Style & Standards
 
@@ -57,14 +57,16 @@ To maintain the professional integrity of the template, follow these standards:
 ### Adding a New Command
 
 1.  **Logic (Service)**: If the command modifies the database, add a method to `ICivilService` and implement it in `CivilServiceImpl` using the `ITransactionService` wrapper.
-2.  **Command (Orchestrator)**: Create a new class implementing `IToolkitCommand` in either `Infrastructure/Commands` (CAD-heavy) or `Plugin/Commands` (UI-heavy).
-3.  **Registration (DI)**: Register the new Command class in `src/Civil3dToolkit.Plugin/DiContainer.cs`.
-4.  **Loader (Proxy)**: Add a `[CommandMethod]` in `MainLoader.cs` that calls `RouteCommandToPlugin("TK_YOUR_COMMAND")`.
+2.  **Command Name (Shared)**: Add a constant to `ToolkitCommands` and use it everywhere for consistency.
+3.  **Command (Orchestrator)**: Create a new class implementing `IToolkitCommand` in either `Infrastructure/Commands` (CAD-heavy) or `Plugin/Commands` (UI-heavy) and decorate it with `[ToolkitCommand(ToolkitCommands.YourCommand)]`.
+4.  **Registration (DI)**: Register the new Command class in `src/Civil3dToolkit.Plugin/DiContainer.cs`.
+5.  **Loader (Proxy)**: Add a `[CommandMethod(ToolkitCommands.YourCommand)]` in `MainLoader.cs` that calls `RouteCommandToPlugin(ToolkitCommands.YourCommand)`.
 
 ### UI and MVVM
 
 *   **Views**: Located in `src/Civil3dToolkit.Plugin/Views/`. Built using WPF (XAML). Use constructor injection for ViewModels.
 *   **ViewModels**: Located in `src/Civil3dToolkit.Core/ViewModels/`. Use `CommunityToolkit.Mvvm`.
+*   **UI Services**: Implement `IUserMessageService` in the Plugin layer to keep Core UI-agnostic.
 *   **Dependency Injection**: All implementations must be registered in `src/Civil3dToolkit.Plugin/DiContainer.cs`.
 
 ### Testing

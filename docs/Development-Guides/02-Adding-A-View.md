@@ -1,34 +1,45 @@
 # 02 - Adding a WPF View (MVVM)
 
-Learn how to create a new window using WPF and bind it to a ViewModel using Dependency Injection and the Command Discovery pattern.
+Learn how to create a new window using WPF and bind it to a ViewModel using Dependency Injection and the attribute-based command discovery pattern.
 
 ---
 
-### Step 1: Create the ViewModel (Core)
+### Step 1: Add a Command Name (Shared)
+
+In `src/Civil3dToolkit.Shared/ToolkitCommands.cs`:
+
+```csharp
+public const string CircleUi = "TK_CIRCLE_UI";
+```
+
+---
+
+### Step 2: Create the ViewModel (Core)
 
 In `src/Civil3dToolkit.Core/ViewModels/`, create `CircleViewModel.cs`:
 
 ```csharp
+namespace Civil3dToolkit.Core.ViewModels;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Civil3dToolkit.Core.ViewModels
+public partial class CircleViewModel : ObservableObject
 {
-    public partial class CircleViewModel : ObservableObject
-    {
-        [ObservableProperty]
-        private double _radius = 10.0;
+    [ObservableProperty]
+    private double _radius = 10.0;
 
-        [RelayCommand]
-        private void Draw()
-        {
-            // Logic to draw...
-        }
+    [RelayCommand]
+    private void Draw()
+    {
+        // ViewModel logic goes here
     }
 }
 ```
 
-### Step 2: Create the WPF View (Plugin)
+---
+
+### Step 3: Create the WPF View (Plugin)
 
 In `src/Civil3dToolkit.Plugin/Views/`, create `CircleWindow.xaml`:
 
@@ -42,7 +53,9 @@ In `src/Civil3dToolkit.Plugin/Views/`, create `CircleWindow.xaml`:
 </Window>
 ```
 
-### Step 3: Configure Dependency Injection (Plugin)
+---
+
+### Step 4: Configure Dependency Injection (Plugin)
 
 In `src/Civil3dToolkit.Plugin/DiContainer.cs`:
 
@@ -51,29 +64,34 @@ services.AddTransient<CircleViewModel>();
 services.AddTransient<CircleWindow>();
 ```
 
-### Step 4: Create the Command Trigger
+---
+
+### Step 5: Create the Command Trigger (Plugin)
 
 Create `src/Civil3dToolkit.Plugin/Commands/OpenCircleUiCommand.cs`:
 
 ```csharp
-public class OpenCircleUiCommand : IToolkitCommand
+namespace Civil3dToolkit.Plugin.Commands;
+
+using Civil3dToolkit.Core.Commands;
+using Civil3dToolkit.Plugin.Views;
+using Civil3dToolkit.Shared;
+
+[ToolkitCommand(ToolkitCommands.CircleUi)]
+internal class OpenCircleUiCommand(IServiceProvider serviceProvider) : IToolkitCommand
 {
-    private readonly IServiceProvider _sp;
-    public string CommandName => "TK_CIRCLE_UI";
-
-    public OpenCircleUiCommand(IServiceProvider sp) => _sp = sp;
-
     public void Execute()
     {
-        var win = _sp.GetRequiredService<CircleWindow>();
-        Autodesk.AutoCAD.ApplicationServices.Application.ShowModalWindow(win);
+        CircleWindow win = serviceProvider.GetRequiredService<CircleWindow>();
+        Application.ShowModalWindow(win);
     }
 }
 ```
 
 ---
 
-## 🏗️ Architectural Benefits
+## Architectural Benefits
+
 - **Separation of Concerns**: The View knows nothing about the CAD database.
 - **Dependency Injection**: ViewModels are injected into Views via constructor injection.
 - **Headless Testing**: You can test `CircleViewModel` in the Tests project without launching Civil 3D.
