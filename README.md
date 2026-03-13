@@ -64,5 +64,5 @@ dotnet test
 ```
 *Note: Only the Core project is testable headlessly. Infrastructure tests require a CAD environment.*
 
-## License
-This project is for internal development use.
+## AI Use Disclaimer
+This codebase includes AI‑generated code. While changes are reviewed, AI output can contain errors or omissions. Please exercise caution, validate behavior in your environment, and perform appropriate code review and testing before relying on it in production.
