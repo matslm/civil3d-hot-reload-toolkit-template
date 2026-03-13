@@ -1,4 +1,4 @@
-# Civil3dToolkit - Enterprise Plugin Template
+# Civil3dToolkit - Plugin Template
 
 A professional, modular, and hot-reloadable framework for Autodesk Civil 3D 2026 development, built with .NET 8.0 and WPF.
 
